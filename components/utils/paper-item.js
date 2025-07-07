@@ -4,6 +4,7 @@ import Image from 'next/image'
 import React from 'react'
 import { FaFilePdf, FaGithub } from 'react-icons/fa'
 import { IoHome } from 'react-icons/io5'
+import { Meta } from './post'
 
 export const PaperItem = ({
   title,
@@ -123,7 +124,7 @@ export const PaperItem = ({
 
           {/* Conference/Journal and Year */}
           <Text fontSize="md" mb={1} fontStyle={'italic'}>
-            {conference} {year}{' '}
+            <Meta color="purple">{conference} {year}</Meta>
             {tag && (
               <Text as="span" color={tagColor} fontWeight="bold">
                 {tag && `(${tag})`}

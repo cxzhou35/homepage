@@ -183,7 +183,7 @@ const Home = () => (
           logo="/images/zju_logo.png"
           logoAlt="ZJU Logo"
           institution="Zhejiang University"
-          period="2024.9 - present"
+          period="Sep. 2024 - Present"
           location="Hangzhou, China"
           title="Ph.D. Student in Computer Science"
         />
@@ -191,7 +191,7 @@ const Home = () => (
           logo="/images/taichi_logo.png"
           logoAlt="Taichi Logo"
           institution="Taichi Graphics"
-          period="2023.6 - 2023.10"
+          period="Jun. 2023 - Oct. 2023"
           location="Beijing, China"
           title="Research Intern."
         />
@@ -199,7 +199,7 @@ const Home = () => (
           logo="/images/zju_logo.png"
           logoAlt="ZJU Logo"
           institution="Zhejiang University"
-          period="2020.9 - 2024.6"
+          period="Sep. 2020 - Jun. 2024"
           location="Hangzhou, China"
           title="B.Eng. in Optoelectronic Information Science and Engineering"
         />
@@ -208,17 +208,17 @@ const Home = () => (
       {/* ta section */}
       <Section delay={0.3}>
         <Heading as="h3" variant="section-title">
-          Teaching Assistant
+          Teaching
         </Heading>
         <List spacing={3}>
           <ListItem>
             <TeachingItem
               courseName="Computational Photography"
-              time="Spring, 2025"
+              time="TA, Spring 2025"
             />
             <TeachingItem
               courseName="Computational Photography"
-              time="Spring, 2024"
+              time="TA, Spring 2024"
             />
           </ListItem>
         </List>
@@ -235,7 +235,7 @@ const Home = () => (
               as={ChevronRightIcon}
               color={useColorModeValue('linkLight', 'linkDark')}
             />
-            Music, Animate, Visual Novels (My favorite is{' '}
+            Music, Anime, Visual Novels (My favorite is{' '}
             <Link href="https://vndb.org/v2002" scroll={false} target="_blank">
               Steins;Gate
             </Link>
