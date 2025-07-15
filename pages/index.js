@@ -1,4 +1,4 @@
-import { ChevronRightIcon } from '@chakra-ui/icons'
+import { ChevronRightIcon, LinkIcon, HamburgerIcon, ExternalLinkIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
@@ -166,7 +166,7 @@ const Home = () => (
             as={NextLink}
             href="/papers"
             scroll={false}
-            rightIcon={<ChevronRightIcon />}
+            rightIcon={<HamburgerIcon />}
             colorScheme="teal"
           >
             My publications
@@ -239,7 +239,7 @@ const Home = () => (
             <Link href="https://vndb.org/v2002" scroll={false} target="_blank">
               Steins;Gate
             </Link>
-            ), Playing Drums
+            ), Playing Drums.
           </ListItem>
           <ListItem>
             <ListIcon
