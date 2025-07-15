@@ -1,4 +1,4 @@
-import { ChevronRightIcon, LinkIcon, HamburgerIcon, ExternalLinkIcon } from '@chakra-ui/icons'
+import { ChevronRightIcon, HamburgerIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
