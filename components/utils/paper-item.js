@@ -6,6 +6,17 @@ import { FaFilePdf, FaGithub } from 'react-icons/fa'
 import { IoHome } from 'react-icons/io5'
 import { Meta } from './post'
 
+const ColorMap = {
+  'CVPR': 'blue',
+  'ICCV': 'teal',
+  'ECCV': 'pink',
+  'NIPS': 'purple',
+  'ICLR': 'green',
+  'SIGGRAPH': 'red',
+  'SIGASIA': 'orange',
+  'AAAI': 'cyan'
+}
+
 export const PaperItem = ({
   title,
   authors,
@@ -20,6 +31,8 @@ export const PaperItem = ({
   // Extract color values at the top level
   const linkColor = useColorModeValue('linkLight', 'linkDark')
   const tagColor = 'red.500' // Example for tag color
+
+  const conferenceColor = ColorMap[conference.toUpperCase()] || 'purple.500'
 
   const renderAuthors = authorList => {
     return authorList.map((author, index, array) => {
@@ -124,7 +137,7 @@ export const PaperItem = ({
 
           {/* Conference/Journal and Year */}
           <Text fontSize="md" mb={1} fontStyle={'italic'}>
-            <Meta color="purple">{conference} {year}</Meta>
+            <Meta color={conferenceColor}>{conference} {year}</Meta>
             {tag && (
               <Text as="span" color={tagColor} fontWeight="bold">
                 {tag && `(${tag})`}
@@ -138,8 +151,7 @@ export const PaperItem = ({
               <Link href={projectPage} color={linkColor} isExternal>
                 <HStack spacing={1}>
                   <IoHome />
-                  {/* <Text>Project Page</Text> */}
-                  <Text>Project</Text>
+                  <Text>Page</Text>
                 </HStack>
               </Link>
             )}

@@ -213,6 +213,10 @@ const Home = () => (
         <List spacing={3}>
           <ListItem>
             <TeachingItem
+              courseName="Introduction to Computer Vision"
+              time="TA, Fall 2025"
+            />
+            <TeachingItem
               courseName="Computational Photography"
               time="TA, Spring 2025"
             />
