@@ -18,6 +18,7 @@ This website is built based on the <a href='https://www.craftz.dog/' target='_bl
 - [x] ~~Add support for paper lists (cover, button, hover, links).~~
 - [x] ~~Update my portrait.~~
 - [ ] Upspeed the loading of the 3D model.
+- [ ] Add the citation button to the paper item.
 - [ ] Update posts content.
 
 ## File structure
