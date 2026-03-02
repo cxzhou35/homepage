@@ -25,6 +25,30 @@ const Papers = () => (
 
       <Section delay={0.1}>
         <PaperItem
+          title="RaGS: Unleashing 3D Gaussian Splatting from 4D Radar and Monocular Cues for 3D Object Detection"
+          authors={[
+            'Xiaokai Bai',
+            'Chenxu Zhou',
+            'Lianqing Zheng',
+            'Si-Yuan Cao',
+            'Jianan Liu',
+            'Xiaohan Zhang',
+            'Yiming Li',
+            'Zhengzhuang Zhang',
+            'Hui-liang Shen'
+          ]}
+          conference="CVPR"
+          year="2026"
+          // thumbnail="https://raw.githubusercontent.com/cxzhou35/projects/main/homepage/videos/papers/lidar_rt.mp4"
+          thumbnail="/images/papers/RaGS_demo.mp4"
+          projectPage=""
+          paperLink="https://arxiv.org/pdf/2507.19856"
+          codeLink=""
+        />
+      </Section>
+
+      <Section delay={0.2}>
+        <PaperItem
           title="LiDAR-RT: Gaussian-based Ray Tracing for Dynamic LiDAR Re-simulation"
           authors={[
             'Chenxu Zhou*',
@@ -41,12 +65,12 @@ const Papers = () => (
           // thumbnail="https://raw.githubusercontent.com/cxzhou35/projects/main/homepage/videos/papers/lidar_rt.mp4"
           thumbnail="/images/papers/lidar_rt.mp4"
           projectPage="https://zju3dv.github.io/lidar-rt/"
-          paperLink="https://arxiv.org/abs/2412.15199"
+          paperLink="https://arxiv.org/pdf/2412.15199"
           codeLink="https://github.com/zju3dv/LiDAR-RT"
         />
       </Section>
 
-      <Section delay={0.2}>
+      <Section delay={0.3}>
         <PaperItem
           title="Street Gaussians: Modeling Dynamic Urban Scenes with Gaussian Splatting"
           authors={[
@@ -65,7 +89,7 @@ const Papers = () => (
           // thumbnail="https://raw.githubusercontent.com/cxzhou35/projects/main/homepage/videos/papers/street_gaussians.mp4"
           thumbnail="/images/papers/street_gaussians.mp4"
           projectPage="https://zju3dv.github.io/street_gaussians"
-          paperLink="https://arxiv.org/abs/2401.01339"
+          paperLink="https://arxiv.org/pdf/2401.01339"
           codeLink="https://github.com/zju3dv/street_gaussians"
         />
       </Section>
