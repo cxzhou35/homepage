@@ -7,14 +7,14 @@ import { IoHome } from 'react-icons/io5'
 import { Meta } from './post'
 
 const ColorMap = {
-  'CVPR': 'blue',
-  'ICCV': 'teal',
-  'ECCV': 'pink',
-  'NIPS': 'purple',
-  'ICLR': 'green',
-  'SIGGRAPH': 'red',
-  'SIGASIA': 'orange',
-  'AAAI': 'cyan'
+  CVPR: 'blue',
+  ICCV: 'teal',
+  ECCV: 'pink',
+  NIPS: 'purple',
+  ICLR: 'green',
+  SIGGRAPH: 'red',
+  SIGASIA: 'orange',
+  AAAI: 'cyan'
 }
 
 export const PaperItem = ({
@@ -137,7 +137,9 @@ export const PaperItem = ({
 
           {/* Conference/Journal and Year */}
           <Text fontSize="md" mb={1} fontStyle={'italic'}>
-            <Meta color={conferenceColor}>{conference} {year}</Meta>
+            <Meta color={conferenceColor}>
+              {conference} {year}
+            </Meta>
             {tag && (
               <Text as="span" color={tagColor} fontWeight="bold">
                 {tag && `(${tag})`}
@@ -149,7 +151,7 @@ export const PaperItem = ({
           <HStack spacing={4}>
             {projectPage && (
               <Link href={projectPage} color={linkColor} isExternal>
-                <HStack spacing={1}>
+                <HStack spacing={1} _hover={{ color: 'teal.500' }}>
                   <IoHome />
                   <Text>Page</Text>
                 </HStack>
@@ -157,7 +159,7 @@ export const PaperItem = ({
             )}
             {paperLink && (
               <Link href={paperLink} color={linkColor} isExternal>
-                <HStack spacing={1}>
+                <HStack spacing={1} _hover={{ color: 'teal.500' }}>
                   <FaFilePdf />
                   <Text>Paper</Text>
                 </HStack>
@@ -165,7 +167,7 @@ export const PaperItem = ({
             )}
             {codeLink && (
               <Link href={codeLink} color={linkColor} isExternal>
-                <HStack spacing={1}>
+                <HStack spacing={1} _hover={{ color: 'teal.500' }}>
                   <FaGithub />
                   <Text>Code</Text>
                 </HStack>

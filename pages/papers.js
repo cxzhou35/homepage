@@ -40,10 +40,10 @@ const Papers = () => (
           conference="CVPR"
           year="2026"
           // thumbnail="https://raw.githubusercontent.com/cxzhou35/projects/main/homepage/videos/papers/lidar_rt.mp4"
-          thumbnail="/images/papers/RaGS_demo.mp4"
-          projectPage=""
+          thumbnail="/images/papers/rags.mp4"
+          projectPage="https://zicx.top/papers"
           paperLink="https://arxiv.org/pdf/2507.19856"
-          codeLink=""
+          codeLink="https://zicx.top/papers"
         />
       </Section>
 
