@@ -1,20 +1,161 @@
-import { Box, HStack, Link, Text, useColorModeValue } from '@chakra-ui/react'
-import { Global } from '@emotion/react'
+import { Box, Link, Stack, Text, useColorModeValue } from '@chakra-ui/react'
 import Image from 'next/image'
-import React from 'react'
+import { useEffect, useRef } from 'react'
 import { FaFilePdf, FaGithub } from 'react-icons/fa'
 import { IoHome } from 'react-icons/io5'
 import { Meta } from './post'
 
-const ColorMap = {
+const CONFERENCE_COLORS = {
   CVPR: 'blue',
   ICCV: 'teal',
   ECCV: 'pink',
   NIPS: 'purple',
   ICLR: 'green',
   SIGGRAPH: 'red',
-  SIGASIA: 'orange',
+  'SIGGRAPH ASIA': 'orange',
   AAAI: 'cyan'
+}
+
+const isVideo = file =>
+  typeof file === 'string' && /\.(mp4|webm|ogg)$/i.test(file)
+
+const VideoPreview = ({ src, poster }) => {
+  const videoRef = useRef(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return undefined
+
+    let isVisible = false
+
+    const updatePlayback = () => {
+      const shouldPlay = isVisible && !document.hidden
+
+      if (shouldPlay) {
+        video.play().catch(() => {})
+      } else {
+        video.pause()
+      }
+    }
+
+    const observer =
+      'IntersectionObserver' in window
+        ? new IntersectionObserver(
+            ([entry]) => {
+              isVisible = entry.isIntersecting
+              updatePlayback()
+            },
+            { threshold: 0.35 }
+          )
+        : null
+
+    if (observer) {
+      observer.observe(video)
+    } else {
+      isVisible = true
+      updatePlayback()
+    }
+
+    document.addEventListener('visibilitychange', updatePlayback)
+
+    return () => {
+      observer?.disconnect()
+      document.removeEventListener('visibilitychange', updatePlayback)
+      video.pause()
+    }
+  }, [])
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      poster={poster}
+      autoPlay
+      loop
+      muted
+      playsInline
+      preload="none"
+      aria-hidden="true"
+      style={{
+        display: 'block',
+        objectFit: 'cover',
+        width: '100%',
+        height: '100%'
+      }}
+    />
+  )
+}
+
+const Authors = ({ authors }) => (
+  <>
+    {authors.map(
+      (
+        {
+          name,
+          isMe = false,
+          equalContribution = false,
+          correspondingAuthor = false
+        },
+        index
+      ) => (
+        <span key={`${name}-${index}`}>
+          <Text as="span" fontWeight={isMe ? 'bold' : 'normal'}>
+            {name}
+            {equalContribution && (
+              <Text as="sup" fontWeight="bold" title="Equal contribution">
+                *
+              </Text>
+            )}
+            {correspondingAuthor && (
+              <Text as="sup" fontWeight="bold" title="Corresponding author">
+                ‡
+              </Text>
+            )}
+          </Text>
+          {index < authors.length - 1 ? ', ' : ''}
+        </span>
+      )
+    )}
+  </>
+)
+
+const ResourceLink = ({ href, icon: Icon, children }) => {
+  const content = (
+    <>
+      <Icon aria-hidden="true" />
+      <Text as="span">{children}</Text>
+    </>
+  )
+
+  if (!href) {
+    return (
+      <Box
+        as="span"
+        display="inline-flex"
+        alignItems="center"
+        gap={1}
+        color="gray.500"
+        cursor="not-allowed"
+        aria-disabled="true"
+        title="Coming soon"
+      >
+        {content}
+      </Box>
+    )
+  }
+
+  return (
+    <Link
+      href={href}
+      isExternal
+      display="inline-flex"
+      alignItems="center"
+      gap={1}
+      _hover={{ color: 'teal.500' }}
+    >
+      {content}
+    </Link>
+  )
 }
 
 export const PaperItem = ({
@@ -23,166 +164,107 @@ export const PaperItem = ({
   conference,
   year,
   thumbnail,
+  poster,
   projectPage,
   paperLink,
   codeLink,
   tag = ''
 }) => {
-  // Extract color values at the top level
   const linkColor = useColorModeValue('linkLight', 'linkDark')
-  const tagColor = 'red.500' // Example for tag color
-
-  const conferenceColor = ColorMap[conference.toUpperCase()] || 'purple.500'
-
-  const renderAuthors = authorList => {
-    return authorList.map((author, index, array) => {
-      let displayAuthor = author
-      let symbol = ''
-
-      if (author.includes('*')) {
-        displayAuthor = author.replace('*', '')
-        symbol = '*'
-      }
-
-      return (
-        <React.Fragment key={index}>
-          <Text
-            as="span"
-            fontWeight={author.includes('Chenxu Zhou') ? 'bold' : 'normal'}
-          >
-            {displayAuthor}
-            {symbol && (
-              <Text as="sup" fontWeight="bold">
-                {symbol}
-              </Text>
-            )}
-          </Text>
-          {index < array.length - 1 ? ', ' : ''}
-        </React.Fragment>
-      )
-    })
-  }
-
-  const isVideo = file => {
-    return (
-      typeof file === 'string' &&
-      (file.endsWith('.mp4') || file.endsWith('.webm') || file.endsWith('.ogg'))
-    )
-  }
+  const previewBackground = useColorModeValue(
+    'whiteAlpha.500',
+    'whiteAlpha.200'
+  )
+  const conferenceColor =
+    CONFERENCE_COLORS[conference?.toUpperCase()] || 'purple'
+  const titleLink = paperLink || projectPage
 
   return (
-    <Box w="100%" mb={6}>
-      <HStack align="stretch" spacing={6}>
-        {/* Thumbnail on the left */}
+    <Box as="article" w="100%">
+      <Stack
+        direction={{ base: 'column', md: 'row' }}
+        align={{ base: 'stretch', md: 'flex-start' }}
+        spacing={{ base: 3, md: 6 }}
+      >
         <Box
           flexShrink={0}
-          width="200px"
-          minheight="120px"
+          width={{ base: '100%', md: '200px' }}
+          minHeight={{ base: 'auto', md: '120px' }}
+          aspectRatio={5 / 3}
           position="relative"
           overflow="hidden"
           borderRadius="8px"
+          backgroundColor={previewBackground}
         >
-          <Box
-            backgroundColor={useColorModeValue(
-              'whiteAlpha.500',
-              'whiteAlpha.200'
-            )}
-            width="100%"
-            height="100%"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            borderRadius="8px"
-          >
-            {/* Conditionally render video or image */}
-            {isVideo(thumbnail) ? (
-              <video
-                src={thumbnail}
-                autoPlay
-                loop
-                muted
-                playsinline
-                preload="metadata"
-                style={{
-                  objectFit: 'cover',
-                  width: '100%',
-                  height: '100%'
-                }}
-              />
-            ) : (
-              <Image
-                src={thumbnail}
-                alt={title}
-                fill
-                style={{
-                  objectFit: 'cover'
-                }}
-                sizes="120px"
-              />
-            )}
-          </Box>
+          {isVideo(thumbnail) ? (
+            <VideoPreview src={thumbnail} poster={poster} />
+          ) : (
+            <Image
+              src={thumbnail}
+              alt=""
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes="(max-width: 47.99em) calc(100vw - 2rem), 200px"
+            />
+          )}
         </Box>
 
-        {/* Content on the right */}
-        <Box flex="1">
-          {/* Title */}
-          <Text fontSize="16" fontWeight="bold" mb={1}>
-            {title}
+        <Box flex="1" minWidth={0}>
+          <Text as="h2" fontSize="md" fontWeight="bold" mb={1}>
+            {titleLink ? (
+              <Link
+                href={titleLink}
+                isExternal
+                color="inherit"
+                _hover={{ color: linkColor }}
+              >
+                {title}
+              </Link>
+            ) : (
+              title
+            )}
           </Text>
 
-          {/* Authors with highlighting */}
           <Text fontSize="md" mb={1}>
-            {renderAuthors(authors)}
+            <Authors authors={authors} />
           </Text>
 
-          {/* Conference/Journal and Year */}
-          <Text fontSize="md" mb={1} fontStyle={'italic'}>
+          <Box fontSize="md" mb={1} fontStyle="italic">
             <Meta color={conferenceColor}>
               {conference} {year}
             </Meta>
             {tag && (
-              <Text as="span" color={tagColor} fontWeight="bold">
-                {tag && `(${tag})`}
+              <Text as="span" color="red.500" fontWeight="bold">
+                ({tag})
               </Text>
             )}
-          </Text>
+          </Box>
 
-          {/* Links */}
-          <HStack spacing={4}>
-            {projectPage && (
-              <Link href={projectPage} color={linkColor} isExternal>
-                <HStack spacing={1} _hover={{ color: 'teal.500' }}>
-                  <IoHome />
-                  <Text>Page</Text>
-                </HStack>
-              </Link>
+          <Box
+            display="flex"
+            flexWrap="wrap"
+            columnGap={4}
+            rowGap={1}
+            color={linkColor}
+          >
+            {projectPage !== undefined && (
+              <ResourceLink href={projectPage} icon={IoHome}>
+                Page
+              </ResourceLink>
             )}
             {paperLink && (
-              <Link href={paperLink} color={linkColor} isExternal>
-                <HStack spacing={1} _hover={{ color: 'teal.500' }}>
-                  <FaFilePdf />
-                  <Text>Paper</Text>
-                </HStack>
-              </Link>
+              <ResourceLink href={paperLink} icon={FaFilePdf}>
+                Paper
+              </ResourceLink>
             )}
-            {codeLink && (
-              <Link href={codeLink} color={linkColor} isExternal>
-                <HStack spacing={1} _hover={{ color: 'teal.500' }}>
-                  <FaGithub />
-                  <Text>Code</Text>
-                </HStack>
-              </Link>
+            {codeLink !== undefined && (
+              <ResourceLink href={codeLink} icon={FaGithub}>
+                Code
+              </ResourceLink>
             )}
-          </HStack>
+          </Box>
         </Box>
-      </HStack>
+      </Stack>
     </Box>
   )
 }
-
-export const GridItemStyle = () => (
-  <Global
-    styles={`
-    `}
-  />
-)
