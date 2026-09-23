@@ -12,7 +12,7 @@ import React from 'react'
 
 const NamePopover = ({
   name = '周晨旭',
-  description = 'My first name is Chenxu, and my last name is Zhou. which means the rising sun in Chinese. I prefer to be addressed as my nickname Zicx, pronounced the same as Zix.',
+  description = 'My name is Chenxu Zhou. My given name, Chenxu (晨旭), evokes the image of the rising sun in Chinese. I also go by Zicx, pronounced “Zix.”',
   placement = 'right',
   trigger = 'hover',
   iconSize = 'sm',

@@ -52,7 +52,7 @@ const Home = () => (
               周晨旭
             </Text>
             <NamePopover
-              description="My first name is Chenxu, and my last name is Zhou, which means the rising sun in Chinese. I prefer to be addressed as my nickname Zicx, pronounced the same like Zix."
+              description="My name is Chenxu Zhou. My given name, Chenxu (晨旭), evokes the image of the rising sun in Chinese. I also go by Zicx, pronounced “Zix.”"
               placement="right"
               trigger="hover"
               iconSize="sm"
@@ -95,7 +95,7 @@ const Home = () => (
           Bio
         </Heading>
         <Paragraph>
-          I am a first-year Ph.D. student in Computer Science at Zhejiang
+          I am a third-year Ph.D. student in Computer Science at Zhejiang
           University, advised by{' '}
           <Link
             as={NextLink}
