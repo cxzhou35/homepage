@@ -1,132 +1,217 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { loadGLTFModel } from '../lib/model'
-import { ModelContainer, ModelSpinner } from './hkmodel-loader'
+import { ModelContainer, ModelPoster } from './hkmodel-loader'
+
+const MAX_PIXEL_RATIO = 1.5
+const FRAME_INTERVAL = 1000 / 30
+const INTRO_DURATION = 1800
 
 function easeOutCirc(x) {
   return Math.sqrt(1 - Math.pow(x - 1, 4))
 }
 
-// Hollow Knight 3D Model
-const HKModel = () => {
-  const refContainer = useRef()
-  const [loading, setLoading] = useState(true)
-  const refRenderer = useRef()
-  // TODO: How to upspeed the model loading?
-  // const urlModelGLB =
-  //   (process.env.NODE_ENV === 'production'
-  //     ? 'https://raw.githubusercontent.com/cxzhou35/projects/main/homepage/models/hollow_knight_fanart.glb'
-  //     : '') + '/hollow_knight_fanart.glb'
-  const urlModelGLB = '/hollow_knight_fanart.glb'
+function disposeMaterial(material) {
+  Object.values(material).forEach(value => {
+    if (value?.isTexture) value.dispose()
+  })
+  material.dispose()
+}
 
-  const handleWindowResize = useCallback(() => {
-    const { current: renderer } = refRenderer
-    const { current: container } = refContainer
-    if (container && renderer) {
-      const scW = container.clientWidth
-      const scH = container.clientHeight
+function disposeModel(model) {
+  model?.traverse(child => {
+    if (!child.isMesh) return
+    child.geometry?.dispose()
+    const materials = Array.isArray(child.material)
+      ? child.material
+      : [child.material]
+    materials.filter(Boolean).forEach(disposeMaterial)
+  })
+}
 
-      renderer.setSize(scW, scH)
-    }
-  }, [])
+const HKModel = ({ modelUrl }) => {
+  const refContainer = useRef(null)
+  const [isReady, setIsReady] = useState(false)
 
-  /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
-    const { current: container } = refContainer
-    if (container) {
-      const scW = container.clientWidth
-      const scH = container.clientHeight
+    const container = refContainer.current
+    if (!container) return undefined
 
-      const renderer = new THREE.WebGLRenderer({
-        antialias: true,
-        alpha: true
+    let disposed = false
+    let frameRequest = null
+    let lastFrameTime = 0
+    let animationStart = null
+    let model = null
+    let modelReady = false
+    let isVisible = true
+
+    let renderer
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: window.devicePixelRatio <= MAX_PIXEL_RATIO,
+        alpha: true,
+        powerPreference: 'low-power'
       })
-      renderer.setPixelRatio(window.devicePixelRatio)
-      renderer.setSize(scW, scH)
-      renderer.outputEncoding = THREE.sRGBEncoding
-      container.appendChild(renderer.domElement)
-      refRenderer.current = renderer
-      const scene = new THREE.Scene()
-
-      const target = new THREE.Vector3(-0.5, 1.2, 0)
-      const initialCameraPosition = new THREE.Vector3(
-        20 * Math.sin(0.2 * Math.PI),
-        10,
-        20 * Math.cos(0.2 * Math.PI)
+    } catch (error) {
+      console.warn(
+        'WebGL is unavailable; using the model poster instead.',
+        error
       )
+      return undefined
+    }
 
-      // 640 -> 240
-      // 8   -> 6
-      const scale = scH * 0.005 + 4.8
-      const camera = new THREE.OrthographicCamera(
-        -scale,
-        scale,
-        scale,
-        -scale,
-        0.01,
-        50000
-      )
-      camera.position.copy(initialCameraPosition)
-      camera.lookAt(target)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, MAX_PIXEL_RATIO))
+    renderer.outputColorSpace = THREE.SRGBColorSpace
+    renderer.domElement.setAttribute('aria-hidden', 'true')
+    Object.assign(renderer.domElement.style, {
+      position: 'absolute',
+      inset: '0',
+      width: '100%',
+      height: '100%'
+    })
+    container.appendChild(renderer.domElement)
 
-      const ambientLight = new THREE.AmbientLight(0xcccccc, Math.PI)
-      scene.add(ambientLight)
+    const scene = new THREE.Scene()
+    const target = new THREE.Vector3(-0.5, 1.2, 0)
+    const initialCameraPosition = new THREE.Vector3(
+      20 * Math.sin(0.2 * Math.PI),
+      10,
+      20 * Math.cos(0.2 * Math.PI)
+    )
+    const camera = new THREE.OrthographicCamera()
+    camera.position.copy(initialCameraPosition)
+    camera.lookAt(target)
 
-      const controls = new OrbitControls(camera, renderer.domElement)
-      controls.autoRotate = true
-      controls.target = target
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.autoRotate = true
+    controls.target = target
 
-      loadGLTFModel(scene, urlModelGLB, {
-        receiveShadow: false,
-        castShadow: false
-      }).then(() => {
-        animate()
-        setLoading(false)
-      })
+    const resize = () => {
+      const width = container.clientWidth
+      const height = container.clientHeight
+      if (!width || !height) return
 
-      let req = null
-      let frame = 0
-      const animate = () => {
-        req = requestAnimationFrame(animate)
+      const scale = height * 0.005 + 4.8
+      const aspect = width / height
+      camera.left = -scale * aspect
+      camera.right = scale * aspect
+      camera.top = scale
+      camera.bottom = -scale
+      camera.near = 0.01
+      camera.far = 50000
+      camera.updateProjectionMatrix()
+      renderer.setSize(width, height, false)
 
-        frame = frame <= 100 ? frame + 1 : frame
+      if (modelReady) renderer.render(scene, camera)
+    }
 
-        if (frame <= 100) {
-          const p = initialCameraPosition
-          const rotSpeed = -easeOutCirc(frame / 120) * Math.PI * 20
+    const stopAnimation = () => {
+      if (frameRequest !== null) {
+        cancelAnimationFrame(frameRequest)
+        frameRequest = null
+      }
+    }
 
-          camera.position.y = 10
-          camera.position.x =
-            p.x * Math.cos(rotSpeed) + p.z * Math.sin(rotSpeed)
-          camera.position.z =
-            p.z * Math.cos(rotSpeed) - p.x * Math.sin(rotSpeed)
-          camera.lookAt(target)
-        } else {
-          controls.update()
+    const animate = time => {
+      frameRequest = null
+      if (disposed || !modelReady || !isVisible || document.hidden) return
+
+      if (time - lastFrameTime < FRAME_INTERVAL) {
+        frameRequest = requestAnimationFrame(animate)
+        return
+      }
+      lastFrameTime = time
+      if (animationStart === null) animationStart = time
+
+      const progress = Math.min((time - animationStart) / INTRO_DURATION, 1)
+      if (progress < 1) {
+        const p = initialCameraPosition
+        const rotation = -easeOutCirc(progress) * Math.PI * 20
+        camera.position.y = 10
+        camera.position.x = p.x * Math.cos(rotation) + p.z * Math.sin(rotation)
+        camera.position.z = p.z * Math.cos(rotation) - p.x * Math.sin(rotation)
+        camera.lookAt(target)
+      } else {
+        controls.update()
+      }
+
+      renderer.render(scene, camera)
+      frameRequest = requestAnimationFrame(animate)
+    }
+
+    const startAnimation = () => {
+      if (
+        frameRequest === null &&
+        modelReady &&
+        isVisible &&
+        !document.hidden
+      ) {
+        frameRequest = requestAnimationFrame(animate)
+      }
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) stopAnimation()
+      else startAnimation()
+    }
+
+    const intersectionObserver = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting
+        if (isVisible) startAnimation()
+        else stopAnimation()
+      },
+      { threshold: 0.05 }
+    )
+    intersectionObserver.observe(container)
+
+    const resizeObserver = new ResizeObserver(resize)
+    resizeObserver.observe(container)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    resize()
+
+    loadGLTFModel(scene, modelUrl, {
+      receiveShadow: false,
+      castShadow: false
+    })
+      .then(loadedModel => {
+        if (disposed) {
+          disposeModel(loadedModel)
+          return
         }
 
+        model = loadedModel
+        modelReady = true
         renderer.render(scene, camera)
-      }
+        setIsReady(true)
+        startAnimation()
+      })
+      .catch(error => {
+        if (!disposed) {
+          console.warn('Unable to load the 3D model; using its poster.', error)
+        }
+      })
 
-      return () => {
-        cancelAnimationFrame(req)
-        renderer.domElement.remove()
-        renderer.dispose()
-      }
-    }
-  }, [])
-
-  useEffect(() => {
-    window.addEventListener('resize', handleWindowResize, false)
     return () => {
-      window.removeEventListener('resize', handleWindowResize, false)
+      disposed = true
+      stopAnimation()
+      intersectionObserver.disconnect()
+      resizeObserver.disconnect()
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      controls.dispose()
+      if (model) {
+        scene.remove(model)
+        disposeModel(model)
+      }
+      renderer.domElement.remove()
+      renderer.dispose()
     }
-  }, [handleWindowResize])
+  }, [modelUrl])
 
   return (
     <ModelContainer ref={refContainer}>
-      {loading && <ModelSpinner />}
+      <ModelPoster isReady={isReady} />
     </ModelContainer>
   )
 }

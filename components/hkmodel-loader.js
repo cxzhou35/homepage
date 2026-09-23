@@ -1,14 +1,21 @@
-import { Box, Spinner } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import { forwardRef } from 'react'
 
-export const ModelSpinner = () => (
-  <Spinner
-    size="xl"
+export const MODEL_POSTER_URL = '/hollow_knight_fanart.v2.webp'
+
+export const ModelPoster = ({ isReady = false }) => (
+  <Box
+    as="img"
+    src={MODEL_POSTER_URL}
+    alt="Hollow Knight 3D model preview"
     position="absolute"
-    left="50%"
-    top="50%"
-    ml="calc(0px - var(--spinner-size) / 2)"
-    mt="calc(0px - var(--spinner-size))"
+    inset={0}
+    width="100%"
+    height="100%"
+    objectFit="contain"
+    opacity={isReady ? 0 : 1}
+    transition="opacity 0.3s ease"
+    pointerEvents="none"
   />
 )
 
@@ -22,6 +29,7 @@ export const ModelContainer = forwardRef(({ children }, ref) => (
     w={[280, 480, 540]}
     h={[280, 480, 540]}
     position="relative"
+    overflow="hidden"
   >
     {children}
   </Box>
@@ -30,7 +38,7 @@ export const ModelContainer = forwardRef(({ children }, ref) => (
 const Loader = () => {
   return (
     <ModelContainer>
-      <ModelSpinner />
+      <ModelPoster />
     </ModelContainer>
   )
 }

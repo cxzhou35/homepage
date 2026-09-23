@@ -5,6 +5,8 @@ import Footer from '../footer'
 import HKModelLoader from '../hkmodel-loader'
 import Navbar from '../navbar'
 
+const MODEL_URL = '/hollow_knight_fanart.v2.glb'
+
 const LazyHKModel = dynamic(() => import('../hkmodel'), {
   ssr: false,
   loading: () => <HKModelLoader />
@@ -20,6 +22,13 @@ const Main = ({ children, router }) => {
         <meta name="author" content="Zicx" />
         <link rel="apple-touch-icon" href="apple-touch-icon.png" />
         <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+        <link
+          rel="preload"
+          href={MODEL_URL}
+          as="fetch"
+          type="model/gltf-binary"
+          crossOrigin="anonymous"
+        />
         <meta name="twitter:title" content="Chenxu Zhou" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@cxzhou35" />
@@ -37,7 +46,8 @@ const Main = ({ children, router }) => {
         }}
         pt={14}
       >
-        <LazyHKModel />
+        {/* Kept outside route-keyed content so navigation reuses one instance. */}
+        <LazyHKModel modelUrl={MODEL_URL} />
         {children}
       </Container>
 
