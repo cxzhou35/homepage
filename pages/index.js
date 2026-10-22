@@ -27,7 +27,7 @@ import VisionProIcon from '../components/icons/visionpro'
 
 const Home = () => (
   <Layout>
-    <Container>
+    <Container maxW="container.md">
       {/* welcome message */}
       <Welcome />
 

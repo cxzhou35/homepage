@@ -5,14 +5,14 @@ import {
   Tooltip,
   useColorModeValue
 } from '@chakra-ui/react'
-import { motion } from 'framer-motion'
 import React, { useEffect, useState } from 'react'
 import { FaLanguage } from 'react-icons/fa'
 
-const MotionText = motion(Text)
+const nextLanguage = { en: 'zh', zh: 'kr', kr: 'en' }
 
 const Welcome = () => {
   const [language, setLanguage] = useState('en') // default: en
+  const [displayedText, setDisplayedText] = useState('')
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
 
   const messages = {
@@ -32,37 +32,40 @@ const Welcome = () => {
       buttonText: 'kr'
     }
   }
+  const targetText = messages[language].text
 
   const toggleLanguage = () => {
     setIsAutoPlaying(false)
-    setLanguage(prevLanguage => {
-      if (prevLanguage === 'en') {
-        return 'zh'
-      } else if (prevLanguage === 'zh') {
-        return 'kr'
-      } else {
-        return 'en'
-      }
-    })
+    setLanguage(prevLanguage => nextLanguage[prevLanguage])
   }
 
   useEffect(() => {
-    if (!isAutoPlaying) return
+    if (!isAutoPlaying || displayedText !== targetText) return
 
-    const timer = setInterval(() => {
-      setLanguage(prevLanguage => {
-        if (prevLanguage === 'en') {
-          return 'zh'
-        } else if (prevLanguage === 'zh') {
-          return 'kr'
-        } else {
-          return 'en'
-        }
-      })
-    }, 3000)
+    const timer = setTimeout(
+      () => setLanguage(prevLanguage => nextLanguage[prevLanguage]),
+      2500
+    )
 
-    return () => clearInterval(timer)
-  }, [isAutoPlaying])
+    return () => clearTimeout(timer)
+  }, [displayedText, isAutoPlaying, targetText])
+
+  useEffect(() => {
+    if (displayedText === targetText) return
+
+    const erasing = !targetText.startsWith(displayedText)
+    const timer = setTimeout(
+      () =>
+        setDisplayedText(
+          erasing
+            ? displayedText.slice(0, -1)
+            : targetText.slice(0, displayedText.length + 1)
+        ),
+      erasing ? 22 : 55
+    )
+
+    return () => clearTimeout(timer)
+  }, [displayedText, targetText])
 
   return (
     <Box
@@ -70,11 +73,22 @@ const Welcome = () => {
       p={3}
       mt={4}
       mb={4}
+      maxW="calc(var(--chakra-sizes-prose) - 2rem)"
+      mx="auto"
       textAlign="center"
-      bg={useColorModeValue('whiteAlpha.400', 'whiteAlpha.200')}
-      boxShadow={'lg'}
+      bg={useColorModeValue(
+        'linear-gradient(135deg, rgba(255,255,255,0.65), rgba(255,255,255,0.2))',
+        'linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04))'
+      )}
+      border="1px solid"
+      borderColor={useColorModeValue('whiteAlpha.700', 'whiteAlpha.300')}
+      boxShadow={useColorModeValue(
+        '0 8px 32px rgba(31,38,50,0.12), inset 0 1px 0 rgba(255,255,255,0.7)',
+        '0 8px 32px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.15)'
+      )}
       css={{
-        backdropFilter: 'blur(10px)',
+        backdropFilter: 'blur(20px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(20px) saturate(160%)',
         animation: 'float 3s ease-in-out infinite'
       }}
       position="relative"
@@ -83,17 +97,23 @@ const Welcome = () => {
         transition: 'transform 0.3s ease-in-out'
       }}
     >
-      <MotionText
+      <Text
         fontSize="md"
         fontFamily={messages[language].fontFamily}
-        key={language}
-        initial={{ opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 8 }}
-        transition={{ duration: 0.5 }}
+        minH="1.5em"
+        aria-label={targetText}
+        _after={{
+          content: '"|"',
+          ml: '2px',
+          animation:
+            displayedText === targetText
+              ? 'caret-blink 1s step-end infinite'
+              : 'none'
+        }}
+        css={{ '@keyframes caret-blink': { '50%': { opacity: 0 } } }}
       >
-        {messages[language].text}
-      </MotionText>
+        {displayedText}
+      </Text>
       <Tooltip
         label="Toggle Language"
         fontSize="12"
