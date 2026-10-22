@@ -14,7 +14,7 @@ const LazyHKModel = dynamic(() => import('../hkmodel'), {
 
 const Main = ({ children, router }) => {
   return (
-    <Box as="main" pb={8}>
+    <Box as="main" display="flex" flexDirection="column" minH="100vh" pb={8}>
       <Head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content="Zicx's homepage" />
@@ -45,6 +45,7 @@ const Main = ({ children, router }) => {
           lg: 'container.xl' // Even wider on large screens
         }}
         pt={14}
+        flex={1}
       >
         {/* Kept outside route-keyed content so navigation reuses one instance. */}
         <LazyHKModel modelUrl={MODEL_URL} />
