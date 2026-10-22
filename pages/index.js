@@ -1,4 +1,4 @@
-import { ChevronRightIcon, HamburgerIcon } from '@chakra-ui/icons'
+import { ChevronRightIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
@@ -13,6 +13,7 @@ import {
   useColorModeValue
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
+import { FaRegNewspaper } from 'react-icons/fa'
 import Layout from '../components/layouts/article'
 import Social from '../components/social'
 import ExperienceItem from '../components/utils/experience-item'
@@ -73,8 +74,8 @@ const Home = () => (
             borderColor="whiteAlpha.800"
             borderWidth={2}
             borderStyle="solid"
-            w="125px"
-            h="125px"
+            w="150px"
+            h="150px"
             display="inline-block"
             borderRadius="lg" // full / square
             overflow="hidden"
@@ -82,8 +83,8 @@ const Home = () => (
             <Image
               src="/images/zicx.jpeg"
               alt="Profile image"
-              width="125"
-              height="125"
+              width="150"
+              height="150"
             />
           </Box>
         </Box>
@@ -91,9 +92,26 @@ const Home = () => (
 
       {/* bio section */}
       <Section delay={0.1}>
-        <Heading as="h3" variant="section-title">
-          Bio
-        </Heading>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          mt={2}
+          mb={4}
+        >
+          <Heading as="h3" variant="section-title" mt={0} mb={0}>
+            Bio
+          </Heading>
+          <Button
+            as={NextLink}
+            href="/papers"
+            scroll={false}
+            rightIcon={<FaRegNewspaper size={18} />}
+            colorScheme="teal"
+          >
+            My publications
+          </Button>
+        </Box>
         <Paragraph>
           I am a third-year Ph.D. student in Computer Science at Zhejiang
           University, advised by{' '}
@@ -160,22 +178,38 @@ const Home = () => (
           </Link>
           ) .
         </Paragraph>
+      </Section>
 
-        <Box align="center" my={4}>
-          <Button
-            as={NextLink}
-            href="/papers"
-            scroll={false}
-            rightIcon={<HamburgerIcon />}
-            colorScheme="teal"
-          >
-            My publications
-          </Button>
-        </Box>
+      <Section delay={0.2}>
+        <Heading as="h3" variant="section-title">
+          News
+        </Heading>
+        <List
+          spacing={2}
+          pl={5}
+          listStyleType="circle"
+          sx={{ 'li::marker': { color: 'teal.500' } }}
+        >
+          <ListItem>
+            <Text as="span" fontWeight="semibold">
+              2026.10
+            </Text>{' '}
+            —{' '}
+            <Link
+              href="https://zju3dv.github.io/realme/"
+              isExternal
+              textDecoration="underline"
+            >
+              RealMe
+            </Link>{' '}
+            is accepted to SIGGRAPH Asia 2026. See you in Kuala Lumpur,
+            Malaysia! 🇲🇾
+          </ListItem>
+        </List>
       </Section>
 
       {/* experience section */}
-      <Section delay={0.2}>
+      <Section delay={0.3}>
         <Heading as="h3" variant="section-title">
           Experience
         </Heading>
@@ -206,7 +240,7 @@ const Home = () => (
       </Section>
 
       {/* ta section */}
-      <Section delay={0.3}>
+      <Section delay={0.4}>
         <Heading as="h3" variant="section-title">
           Teaching
         </Heading>
@@ -229,7 +263,7 @@ const Home = () => (
       </Section>
 
       {/* hobby section */}
-      <Section delay={0.4}>
+      <Section delay={0.5}>
         <Heading as="h3" variant="section-title">
           I ♥
         </Heading>
