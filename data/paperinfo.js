@@ -14,9 +14,9 @@ export const papers = [
     year: '2026',
     thumbnail: '/images/papers/realme.mp4',
     poster: '/images/papers/realme.webp',
-    projectPage: '/papers',
-    paperLink: 'https://doi.org/10.1145/3829340.3842349',
-    codeLink: '/papers'
+    projectPage: 'https://zju3dv.github.io/realme/',
+    paperLink: 'https://arxiv.org/pdf/2610.30023',
+    codeLink: 'https://github.com/zju3dv/RealMe'
   },
   {
     title:
