@@ -17,8 +17,8 @@ This website is built based on the <a href='https://www.craftz.dog/' target='_bl
   > The Hollow Knight 3D model is designed by [@Guilherme Lé](https://sketchfab.com/3d-models/hollow-knight-fanart-aee54b0967114f4699ba25a77d467eac) ️💙
 - [x] ~~Add support for paper lists (cover, button, hover, links).~~
 - [x] ~~Update my portrait.~~
-- [ ] Upspeed the loading of the 3D model.
-- [ ] Add the citation button to the paper item.
+- [x] ~~Upspeed the loading of the 3D model.~~
+- [x] ~~Add the citation button to the paper item.~~
 - [ ] Update posts content.
 
 ## File structure
