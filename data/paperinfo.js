@@ -16,7 +16,14 @@ export const papers = [
     poster: '/images/papers/realme.webp',
     projectPage: 'https://zju3dv.github.io/realme/',
     paperLink: 'https://arxiv.org/pdf/2610.30023',
-    codeLink: 'https://github.com/zju3dv/RealMe'
+    codeLink: 'https://github.com/zju3dv/RealMe',
+    bibtex: `@inproceedings{zhou2026realme,
+  title     = {RealMe: Immersive Volumetric Video from Minimal Captures},
+  author    = {Zhou, Chenxu and Yu, Zhiyuan and Jin, Yudong and Shentu, Yinji and Zhang, Yu and Sun, Jiaming and Zhou, Xiaowei},
+  booktitle = {SIGGRAPH Asia 2026 Conference Papers},
+  year      = {2026},
+  doi       = {10.1145/3829340.3842349}
+}`
   },
   {
     title:
@@ -38,7 +45,15 @@ export const papers = [
     poster: '/images/papers/rags.webp',
     projectPage: '/papers',
     paperLink: 'https://arxiv.org/pdf/2507.19856',
-    codeLink: 'https://github.com/shawnnnkb/RaGS'
+    codeLink: 'https://github.com/shawnnnkb/RaGS',
+    bibtex: `@InProceedings{Bai_2026_CVPR,
+    author    = {Bai, Xiaokai and Zhou, Chenxu and Zheng, Lianqing and Liu, Jianan and Cao, Si-Yuan and Zhang, Xiaohan and Li, Yiming and Zhang, Zhengzhuang and Shen, Hui-Liang},
+    title     = {RaGS: Unleashing 3D Gaussian Splatting from 4D Radar and Monocular Cue for 3D Object Detection},
+    booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+    month     = {June},
+    year      = {2026},
+    pages     = {4983-4992}
+}`
   },
   {
     title:
@@ -59,7 +74,14 @@ export const papers = [
     poster: '/images/papers/lidar_rt.webp',
     projectPage: 'https://zju3dv.github.io/lidar-rt/',
     paperLink: 'https://arxiv.org/pdf/2412.15199',
-    codeLink: 'https://github.com/zju3dv/LiDAR-RT'
+    codeLink: 'https://github.com/zju3dv/LiDAR-RT',
+    bibtex: `@inproceedings{zhou2024lidarrt,
+    title={{LiDAR-RT}: Gaussian-based Ray Tracing for Dynamic LiDAR Re-simulation},
+    author={Zhou, Chenxu and Fu, Lvchang and Peng, Sida and Yan, Yunzhi and Zhang, Zhanhua and Chen, Yong and Xia, Jiazhi
+    and Zhou, Xiaowei},
+    booktitle={Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition},
+    year={2025}
+}`
   },
   {
     title:
@@ -81,6 +103,12 @@ export const papers = [
     poster: '/images/papers/street_gaussians.webp',
     projectPage: 'https://zju3dv.github.io/street_gaussians',
     paperLink: 'https://arxiv.org/pdf/2401.01339',
-    codeLink: 'https://github.com/zju3dv/street_gaussians'
+    codeLink: 'https://github.com/zju3dv/street_gaussians',
+    bibtex: `@inproceedings{yan2024street,
+    title={Street Gaussians for Modeling Dynamic Urban Scenes},
+    author={Yunzhi Yan and Haotong Lin and Chenxu Zhou and Weijie Wang and Haiyang Sun and Kun Zhan and Xianpeng Lang and Xiaowei Zhou and Sida Peng},
+    booktitle={ECCV},
+    year={2024},
+}`
   }
 ]
