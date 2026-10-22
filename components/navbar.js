@@ -1,20 +1,30 @@
-import { CalendarIcon, ChatIcon, HamburgerIcon } from '@chakra-ui/icons'
+import {
+  CalendarIcon,
+  ChatIcon,
+  HamburgerIcon,
+  SearchIcon
+} from '@chakra-ui/icons'
 import {
   Box,
   Container,
   Flex,
   Heading,
   IconButton,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  InputRightElement,
   Link,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   Stack,
+  Text,
   useColorModeValue
 } from '@chakra-ui/react'
 import NextLink from 'next/link'
-import { forwardRef } from 'react'
+import { forwardRef, useEffect, useRef } from 'react'
 import { IoLogoGithub } from 'react-icons/io5'
 
 import Logo from './logo'
@@ -45,6 +55,20 @@ const MenuLink = forwardRef((props, ref) => (
 
 const Navbar = props => {
   const { path } = props
+  const searchInput = useRef(null)
+
+  useEffect(() => {
+    const focusSearch = event => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        searchInput.current?.focus()
+        searchInput.current?.select()
+      }
+    }
+
+    document.addEventListener('keydown', focusSearch)
+    return () => document.removeEventListener('keydown', focusSearch)
+  }, [])
 
   return (
     <Box
@@ -98,11 +122,50 @@ const Navbar = props => {
           </LinkItem>
         </Stack>
 
-        {/* toggle button with options */}
-        <Box flex={1} align="right">
+        <Flex flex={1} align="center" justify="flex-end" gap={2}>
+          <InputGroup
+            as="form"
+            action="/search"
+            method="get"
+            size="sm"
+            w={{ base: '120px', md: '160px' }}
+            mr={2}
+          >
+            <InputLeftElement pointerEvents="none">
+              <SearchIcon boxSize="14px" color="gray.600" />
+            </InputLeftElement>
+            <Input
+              ref={searchInput}
+              name="q"
+              type="search"
+              aria-label="Search site"
+              aria-keyshortcuts="Control+K Meta+K"
+              placeholder="Search"
+              pl={8}
+              pr={{ base: 2, md: '48px' }}
+              borderWidth="2px"
+              borderColor={useColorModeValue('iconLight', 'iconDark')}
+              borderRadius="lg"
+              focusBorderColor="teal.500"
+              required
+            />
+            <InputRightElement
+              pointerEvents="none"
+              w="42px"
+              display={{ base: 'none', md: 'flex' }}
+            >
+              <Text
+                as="span"
+                fontSize="xs"
+                color={useColorModeValue('gray.700', 'gray.300')}
+              >
+                ⌘ K
+              </Text>
+            </InputRightElement>
+          </InputGroup>
           <ThemeToggleButton />
 
-          <Box ml={2} display={{ base: 'inline-block', md: 'none' }}>
+          <Box display={{ base: 'inline-block', md: 'none' }}>
             <Menu isLazy id="navbar-menu">
               <MenuButton
                 as={IconButton}
@@ -126,7 +189,7 @@ const Navbar = props => {
               </MenuList>
             </Menu>
           </Box>
-        </Box>
+        </Flex>
       </Container>
     </Box>
   )
