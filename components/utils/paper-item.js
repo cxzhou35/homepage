@@ -1,8 +1,21 @@
-import { Box, Link, Stack, Text, useColorModeValue } from '@chakra-ui/react'
+import {
+  Box,
+  IconButton,
+  Link,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Portal,
+  Stack,
+  Text,
+  useClipboard,
+  useColorModeValue
+} from '@chakra-ui/react'
 import Image from 'next/image'
 import { useEffect, useRef } from 'react'
 import { FaFilePdf, FaGithub } from 'react-icons/fa'
 import { IoHome } from 'react-icons/io5'
+import { TbCheck, TbCopy, TbFileText } from 'react-icons/tb'
 import { Meta } from './post'
 
 const CONFERENCE_COLORS = {
@@ -168,13 +181,16 @@ export const PaperItem = ({
   projectPage,
   paperLink,
   codeLink,
+  bibtex,
   tag = ''
 }) => {
+  const { hasCopied, onCopy } = useClipboard(bibtex || '')
   const linkColor = useColorModeValue('linkLight', 'linkDark')
   const previewBackground = useColorModeValue(
     'whiteAlpha.500',
     'whiteAlpha.200'
   )
+  const citationBackground = useColorModeValue('gray.100', 'gray.800')
   const conferenceColor =
     CONFERENCE_COLORS[conference?.toUpperCase()] || 'purple'
   const titleLink = paperLink || projectPage
@@ -261,6 +277,67 @@ export const PaperItem = ({
               <ResourceLink href={codeLink} icon={FaGithub}>
                 Code
               </ResourceLink>
+            )}
+            {bibtex && (
+              <Popover placement="right-start">
+                <PopoverTrigger>
+                  <Link
+                    as="button"
+                    type="button"
+                    display="inline-flex"
+                    alignItems="center"
+                    gap={1}
+                    _hover={{ color: 'teal.500' }}
+                  >
+                    <TbFileText aria-hidden="true" size={18} />
+                    BibTeX
+                  </Link>
+                </PopoverTrigger>
+                <Portal>
+                  <PopoverContent
+                    w="400px"
+                    maxW="calc(100vw - 2rem)"
+                    bg={citationBackground}
+                    p={3}
+                    position="relative"
+                  >
+                    <Box
+                      as="pre"
+                      fontSize="xs"
+                      whiteSpace="pre-wrap"
+                      overflowWrap="break-word"
+                      maxH="50vh"
+                      overflowY="auto"
+                    >
+                      {bibtex.split('\n').map((line, index) => {
+                        const indent = line.length - line.trimStart().length
+                        return (
+                          <Box
+                            as="span"
+                            display="block"
+                            pl={`${indent}ch`}
+                            key={index}
+                          >
+                            {line.slice(indent)}
+                          </Box>
+                        )
+                      })}
+                    </Box>
+                    <IconButton
+                      position="absolute"
+                      right={2}
+                      bottom={2}
+                      size="sm"
+                      fontSize="lg"
+                      variant="ghost"
+                      colorScheme="teal"
+                      aria-label={hasCopied ? 'Copied BibTeX' : 'Copy BibTeX'}
+                      icon={hasCopied ? <TbCheck /> : <TbCopy />}
+                      onClick={onCopy}
+                    />
+                  </PopoverContent>
+                </Portal>
+              </Popover>
             )}
           </Box>
         </Box>
