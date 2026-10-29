@@ -1,6 +1,8 @@
 import { Box, Link } from '@chakra-ui/react'
 
 const Footer = () => {
+  const lastUpdated = process.env.LAST_UPDATED
+
   return (
     <Box align="center" fontSize="sm" color="gray.600">
       &copy; {new Date().getFullYear()} Chenxu Zhou. All Rights Reserved. The
@@ -21,6 +23,9 @@ const Footer = () => {
         template
       </Link>
       .
+      <Box mt={1}>
+        Last updated: <time dateTime={lastUpdated}>{lastUpdated}</time>
+      </Box>
     </Box>
   )
 }

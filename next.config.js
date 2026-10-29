@@ -1,6 +1,11 @@
 module.exports = {
   reactStrictMode: true,
   swcMinify: true,
+  env: {
+    LAST_UPDATED: new Date().toLocaleDateString('en-CA', {
+      timeZone: 'Asia/Shanghai'
+    })
+  },
   async headers() {
     return [
       {

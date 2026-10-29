@@ -26,7 +26,7 @@ const Social = () => {
       />
       <SocialItem icon={FaTwitter} link="https://twitter.com/cxzhou35" />
       <SocialItem icon={FaTelegramPlane} link="https://t.me/cxzhou35" />
-      <SocialItem icon={IoMdMail} link="mailto:cxzhou35@zju.edu.cn" />
+      <SocialItem icon={IoMdMail} link="mailto:cxzhou35@outlook.com" />
     </Box>
   )
 }
